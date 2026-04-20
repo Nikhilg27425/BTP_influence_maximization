@@ -140,6 +140,53 @@ python experiments.py all --k 50 --eps 0.5
 
 ---
 
+## Our Results (2000-node subgraph, k=20, ε=0.5, p=0.01)
+
+### Slashdot subgraph — 2,000 nodes, 13,418 edges
+
+| Metric | D-RIS | RIS | CELF (partial) |
+|--------|-------|-----|----------------|
+| Final spread (k=20) | 54.12 | 56.98 | 57.81 (k=20 est.) |
+| Running time | 0.3s | 1.1s | ~50s (2000 nodes × 1000 runs) |
+| RRR sets / MC lookups | 53,719 | 200,000 | 2,076 (step 11) |
+| θ determination | Dynamic (OPT_est=158) | Fixed cap (200k) | N/A |
+
+D-RIS θ breakdown: initial 1,000 + 52,719 additional = 53,719 total.
+Coverage fraction at initial estimate: 0.0790.
+
+### Epinions subgraph — 2,000 nodes, 74,364 edges
+
+| Metric | D-RIS | RIS |
+|--------|-------|-----|
+| Final spread (k=20) | 169.80 | 173.38 |
+| Running time | 1.0s | 4.9s |
+| RRR sets generated | 34,224 | 200,000 |
+| θ determination | Dynamic (OPT_est=248) | Fixed cap (200k) |
+| Speedup vs RIS | **4.9x faster** | baseline |
+
+D-RIS θ breakdown: initial 1,000 + 33,224 additional = 34,224 total.
+Coverage fraction at initial estimate: 0.1240.
+
+**Key observations:**
+- D-RIS spread is within 5% of RIS on both datasets — near-identical quality
+- D-RIS is **3.7x–4.9x faster** than RIS by generating fewer RRR sets
+- D-RIS dynamically adapts θ based on OPT estimate — avoids over-sampling
+- Both D-RIS and RIS are dramatically faster than CELF on large graphs
+
+### CELF comparison (Slashdot subgraph, k=20, 1000 MC runs)
+
+| Step | Spread | Recomputed | Total lookups |
+|------|--------|-----------|---------------|
+| 1 | 22.21 | 0 | 2,000 |
+| 5 | 33.25 | 8 | 2,019 |
+| 10 | 43.29 | 5 | 2,060 |
+| 11 | 45.02 | 16 | 2,076 |
+
+CELF was stopped at step 11 (~50s elapsed). Estimated total for k=20: ~90s.
+D-RIS completed k=20 in **0.3s** — ~300x faster than CELF on this subgraph.
+
+---
+
 ## Paper's Reported Results (k=1..50)
 
 The paper compares D-RIS against CELF, RIS, HighDegree, LIR, and pBmH on both datasets:
