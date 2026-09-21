@@ -1,0 +1,5 @@
+# Generated experiment outputs — gitignored
+# Re-run experiments.py to regenerate
+*.png
+*.json
+*.csv
